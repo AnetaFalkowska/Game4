@@ -4,16 +4,20 @@ const gameStatus = document.querySelector("#game-status");
 let computerSequence = [];
 let userSequence = [];
 let level = 0;
+let gameStarted = false;
 
 document.addEventListener("keypress", function () {
-  nextLevel();
+  if (!gameStarted) {
+    nextLevel();
+    gameStarted = true
+  }
 });
 
 cards.forEach((card) => card.addEventListener("click", function() {
   playSound(this.id);
   flash(this.id)
   userSequence.push(this.id);
-  step = userSequence.length - 1;
+  let step = userSequence.length - 1;
   checkForMatch(step);
 }));
 
@@ -31,11 +35,11 @@ function checkForMatch(step) {
       setTimeout(nextLevel, 800)
     }
   } else {
-    let sound = new Audio("./sounds/wrong.mp3");
-    sound.play()
+    playSound("wrong")
     gameStatus.innerHTML = "Game over! Press any key to restart";
     level = 0;
     computerSequence = [];
+    gameStarted = false
   }
 }
 
@@ -44,7 +48,6 @@ function nextLevel() {
   gameStatus.innerHTML = "Level:" + level;
   userSequence = [];
   computerChoice();
-  console.log(computerSequence);
 }
 
 function playSound(card) {  
@@ -53,7 +56,6 @@ function playSound(card) {
 }
 
 function flash(color) {
-
   let card = document.querySelector("#" + color)
   card.style.opacity = 0.5;
   setTimeout(() => {
